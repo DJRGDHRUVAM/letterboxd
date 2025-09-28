@@ -1,15 +1,18 @@
 import mysql.connector
-import movies_db  # Make sure movies_db.py exists
+import movies_db  # Import the file above
 
 # --- Connect to MySQL ---
 database = mysql.connector.connect(
     host="localhost",
     user="root",
-    password="mysql",  # your MySQL password
-    database="postboxd",
-    charset='utf8'
+    password="mysql",
+    charset="utf8"
 )
 cursor = database.cursor()
+cursor.execute("CREATE DATABASE IF NOT EXISTS postboxd")
+database.commit()
+
+cursor.execute("USE postboxd")
 
 # --- Create users table ---
 cursor.execute("""
@@ -29,12 +32,7 @@ CREATE TABLE IF NOT EXISTS ratings (
     rating INT
 )
 """)
-
-# --- Ensure 'language' column exists in movies ---
-cursor.execute("SHOW COLUMNS FROM movies LIKE 'language'")
-if cursor.fetchone() is None:
-    cursor.execute("ALTER TABLE movies ADD COLUMN language VARCHAR(50) DEFAULT 'English'")
-    database.commit()
+database.commit()
 
 # --- Register ---
 def register():
@@ -102,7 +100,6 @@ def display_top_movies():
         params.append(language)
 
     query += " GROUP BY m.title ORDER BY avg_rating DESC LIMIT 5"
-
     cursor.execute(query, tuple(params))
     top_movies = cursor.fetchall()
 
@@ -147,7 +144,10 @@ def main():
             if username:
                 # Load movies CSV once after first login
                 movies = movies_db.load_movies_from_csv("movies.csv")
+                
+                # Insert safely
                 movies_db.insert_movies(movies)
+                
                 menu(username)
                 break
         elif choice.lower() == 'b':
