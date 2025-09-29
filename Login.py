@@ -1,18 +1,16 @@
 import mysql.connector
-import movies_db  # Import the file above
+import movies_db  # Make sure movies_db.py exists
+import time
 
 # --- Connect to MySQL ---
 database = mysql.connector.connect(
     host="localhost",
     user="root",
-    password="mysql",
-    charset="utf8"
+    password="mysql",  # your MySQL password
+    database="postboxd",
+    charset='utf8'
 )
 cursor = database.cursor()
-cursor.execute("CREATE DATABASE IF NOT EXISTS postboxd")
-database.commit()
-
-cursor.execute("USE postboxd")
 
 # --- Create users table ---
 cursor.execute("""
@@ -32,7 +30,12 @@ CREATE TABLE IF NOT EXISTS ratings (
     rating INT
 )
 """)
-database.commit()
+
+# --- Ensure 'language' column exists in movies ---
+cursor.execute("SHOW COLUMNS FROM movies LIKE 'language'")
+if cursor.fetchone() is None:
+    cursor.execute("ALTER TABLE movies ADD COLUMN language VARCHAR(50) DEFAULT 'English'")
+    database.commit()
 
 # --- Register ---
 def register():
@@ -42,8 +45,10 @@ def register():
         cursor.execute("INSERT INTO users (username, password) VALUES (%s, %s)", (username, password))
         database.commit()
         print("✅ Registration successful")
+        time.sleep(2)
     except mysql.connector.IntegrityError:
         print("❌ Username already exists.")
+        time.sleep(2)
 
 # --- Login ---
 def login():
@@ -53,63 +58,17 @@ def login():
     user = cursor.fetchone()
     if user:
         print(f"✅ Login successful! Welcome {username}")
+        time.sleep(2)
         return username
     else:
         print("❌ Invalid username or password.")
+        time.sleep(2)
+
         return None
 
 # --- Rate a movie ---
-def rate_movie(username):
-    movie_title = input("Enter movie title to rate: ")
-    while True:
-        try:
-            rating = int(input("Rate this movie (1-10): "))
-            if 1 <= rating <= 10:
-                break
-            else:
-                print("Rating must be 1–10.")
-        except ValueError:
-            print("Enter a valid number.")
-    cursor.execute("INSERT INTO ratings (username, movie_title, rating) VALUES (%s, %s, %s)",
-                   (username, movie_title, rating))
-    database.commit()
-    print("✅ Rating saved!")
 
 # --- Display top 5 movies ---
-def display_top_movies():
-    genre = input("Enter genre (or 'any'): ")
-    age = input("Enter age category (or 'any'): ")
-    language = input("Enter language (or 'any'): ")
-
-    query = """
-    SELECT m.title, m.year, m.genre, m.age_limit, m.language, AVG(r.rating) as avg_rating
-    FROM movies m
-    LEFT JOIN ratings r ON m.title = r.movie_title
-    WHERE 1=1
-    """
-    params = []
-
-    if genre.lower() != "any":
-        query += " AND m.genre = %s"
-        params.append(genre)
-    if age.lower() != "any":
-        query += " AND m.age_limit = %s"
-        params.append(age)
-    if language.lower() != "any":
-        query += " AND m.language = %s"
-        params.append(language)
-
-    query += " GROUP BY m.title ORDER BY avg_rating DESC LIMIT 5"
-    cursor.execute(query, tuple(params))
-    top_movies = cursor.fetchall()
-
-    if top_movies:
-        print("\n🏆 Top 5 Movies:")
-        for m in top_movies:
-            avg_rating = round(m[5], 1) if m[5] else "No ratings yet"
-            print(f"{m[0]} ({m[1]}) | Genre: {m[2]} | Age: {m[3]} | Language: {m[4]} | Avg Rating: {avg_rating}")
-    else:
-        print("No movies found with the selected filters.")
 
 # --- Menu ---
 def menu(username):
@@ -121,14 +80,15 @@ def menu(username):
         choice = input("Enter choice: ")
 
         if choice == "1":
-            display_top_movies()
+            movies_db.display_top_movies()
         elif choice == "2":
-            rate_movie(username)
+            movies_db.rate_movie(username)
         elif choice == "3":
             print("Exiting menu...")
             break
         else:
             print("Invalid choice.")
+            time.sleep(2)
 
 # --- Main ---
 def main():
@@ -144,10 +104,7 @@ def main():
             if username:
                 # Load movies CSV once after first login
                 movies = movies_db.load_movies_from_csv("movies.csv")
-                
-                # Insert safely
                 movies_db.insert_movies(movies)
-                
                 menu(username)
                 break
         elif choice.lower() == 'b':
@@ -157,6 +114,7 @@ def main():
             break
         else:
             print("Invalid choice.")
+            time.sleep(2)
 
 if __name__ == "__main__":
     main()
