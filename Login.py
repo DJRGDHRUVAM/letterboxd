@@ -1,18 +1,17 @@
 import mysql.connector
-import movies_db  # Make sure movies_db.py exists
+import movies_db  
 import time
-
-# --- Connect to MySQL ---
+import os
+import sys
 database = mysql.connector.connect(
     host="localhost",
     user="root",
-    password="mysql",  # your MySQL password
+    password="mysql",  
     database="postboxd",
     charset='utf8'
 )
 cursor = database.cursor()
 
-# --- Create users table ---
 cursor.execute("""
 CREATE TABLE IF NOT EXISTS users (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -21,7 +20,6 @@ CREATE TABLE IF NOT EXISTS users (
 )
 """)
 
-# --- Create ratings table ---
 cursor.execute("""
 CREATE TABLE IF NOT EXISTS ratings (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -31,13 +29,20 @@ CREATE TABLE IF NOT EXISTS ratings (
 )
 """)
 
-# --- Ensure 'language' column exists in movies ---
 cursor.execute("SHOW COLUMNS FROM movies LIKE 'language'")
 if cursor.fetchone() is None:
     cursor.execute("ALTER TABLE movies ADD COLUMN language VARCHAR(50) DEFAULT 'English'")
     database.commit()
 
-# --- Register ---
+
+
+def clear_terminal():
+    """Clears the terminal screen based on the operating system."""
+    if sys.platform.startswith('win'):
+        os.system('cls')
+    else:
+        os.system('clear')
+
 def register():
     username = input("Enter username: ")
     password = input("Enter password: ")
@@ -45,12 +50,13 @@ def register():
         cursor.execute("INSERT INTO users (username, password) VALUES (%s, %s)", (username, password))
         database.commit()
         print("✅ Registration successful")
-        time.sleep(2)
+        time.sleep(1.25)
+        clear_terminal()
     except mysql.connector.IntegrityError:
         print("❌ Username already exists.")
-        time.sleep(2)
+        time.sleep(1.25)
+        clear_terminal()
 
-# --- Login ---
 def login():
     username = input("Enter username: ")
     password = input("Enter password: ")
@@ -59,20 +65,18 @@ def login():
     if user:
         print(f"✅ Login successful! Welcome {username}")
         time.sleep(2)
+        clear_terminal()
         return username
     else:
         print("❌ Invalid username or password.")
         time.sleep(2)
-
+        clear_terminal()
         return None
 
-# --- Rate a movie ---
 
-# --- Display top 5 movies ---
-
-# --- Menu ---
 def menu(username):
     while True:
+        clear_terminal() 
         print("\n--- MOVIE MENU ---")
         print("1. Display top 5 movies by rating")
         print("2. Rate a movie")
@@ -90,7 +94,6 @@ def menu(username):
             print("Invalid choice.")
             time.sleep(2)
 
-# --- Main ---
 def main():
     while True:
         print("\n--- LOGIN SYSTEM ---")
@@ -102,7 +105,6 @@ def main():
         if choice.lower() == 'a':
             username = login()
             if username:
-                # Load movies CSV once after first login
                 movies = movies_db.load_movies_from_csv("movies.csv")
                 movies_db.insert_movies(movies)
                 menu(username)
