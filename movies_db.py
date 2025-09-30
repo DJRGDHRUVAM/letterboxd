@@ -2,7 +2,6 @@ import mysql.connector
 import csv
 import time 
 
-# Connect to MySQL
 database = mysql.connector.connect(
     host="localhost",
     user="root",
@@ -13,7 +12,6 @@ database = mysql.connector.connect(
 database.autocommit = True
 cursor = database.cursor()
 
-# Create movies table
 cursor.execute("""
 CREATE TABLE IF NOT EXISTS movies (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -25,7 +23,6 @@ CREATE TABLE IF NOT EXISTS movies (
 )
 """)
 
-# --- Load movies from CSV ---
 
 def load_movies_from_csv(file_path="movies.csv"):
     movies = []
@@ -41,7 +38,6 @@ def load_movies_from_csv(file_path="movies.csv"):
                 "genre": row["genre"]
             })
     return movies
-# --- Insert movies into DB ---
 def insert_movies(movies):
     cursor.execute('select * from movies')
     store = cursor.fetchall()
@@ -53,7 +49,6 @@ def insert_movies(movies):
             """, (movie["title"], movie["year"], movie["rating"], movie["age_limit"], movie["genre"]))
         database.commit()
 
-# --- Fetch all movies ---
 def get_all_movies():
     cursor.execute("SELECT title, year, rating, age_limit, genre FROM movies")
     return cursor.fetchall()
@@ -92,6 +87,9 @@ def display_top_movies():
             avg_rating = round(m[5], 1) if m[5] else "No ratings yet"
             print(f"{m[0]} ({m[1]}) | Genre: {m[2]} | Age: {m[3]} | Language: {m[4]} | Avg Rating: {avg_rating}")
             time.sleep(1)
+        y = input("\nPress Enter to return to menu...")
+        if y == "":
+            None
     else:
         print("No movies found with the selected filters.")
         time.sleep(2)
