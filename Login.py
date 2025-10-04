@@ -80,15 +80,21 @@ def menu(username):
         print("\n--- MOVIE MENU ---")
         print("1. Display top 5 movies by rating")
         print("2. Rate a movie")
-        print("3. Exit")
+        print("3. Delete your rating")
+        print("4. Show my ratings")
+        print("5. Exit")
         choice = input("Enter choice: ")
 
         if choice == "1":
             movies_db.display_top_movies()
         elif choice == "2":
             movies_db.rate_movie(username)
-        elif choice == "3":
-            print("Exiting menu...")
+        elif choice == '3':
+            movies_db.delete_rating(username)
+        elif choice == "4":
+            movies_db.show_my_ratings(username)
+        elif choice == "5":
+            print("Exiting...")
             break
         else:
             print("Invalid choice.")

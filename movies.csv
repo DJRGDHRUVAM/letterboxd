@@ -1,11 +1,26 @@
-title,year,rating,age_limit,genre
-The Shawshank Redemption,1994,9.3,R,Thriller
-The Godfather,1972,9.2,R,Thriller
-The Dark Knight,2008,9.0,PG-13,Action
-Inception,2010,8.8,PG-13,SciFi
-Forrest Gump,1994,8.8,PG-13,Romance
-Pulp Fiction,1994,8.9,R,Thriller
-The Lord of the Rings: The Fellowship of the Ring,2001,8.8,PG-13,Fantasy
-Fight Club,1999,8.8,R,Thriller
-The Matrix,1999,8.7,R,SciFi
-Gladiator,2000,8.5,R,Action
+title,year,rating,age_limit,genre,language
+inception,2010,8.8,pg13,scifi,english
+interstellar,2014,8.6,pg13,scifi,english
+the matrix,1999,8.7,r,scifi,english
+edge of tomorrow,2014,7.9,pg13,scifi,english
+arrival,2016,8.0,pg13,scifi,english
+the dark knight,2008,9.0,pg13,action,english
+avengers: endgame,2019,8.4,pg13,action,english
+petta,2019,7.1,r,action,tamil
+baahubali: the beginning,2015,8.0,pg,action,telugu
+kgf chapter 2,2022,8.2,r,action,hindi
+parasite,2019,8.6,r,thriller,korean
+drishyam,2015,8.2,pg,thriller,malayalam
+psycho,1960,8.5,r,thriller,english
+get out,2017,7.7,r,thriller,english
+andhadhun,2018,8.3,r,thriller,hindi
+titanic,1997,7.8,pg13,romance,english
+the fault in our stars,2014,7.7,pg13,romance,english
+jab we met,2007,7.9,pg,romance,hindi
+vinnaithaandi varuvaayaa,2010,7.8,pg13,romance,tamil
+96,2018,8.2,pg,romance,tamil
+harry potter and the sorcerer's stone,2001,7.6,pg,fantasy,english
+the lord of the rings: the fellowship of the ring,2001,8.8,pg13,fantasy,english
+baahubali 2: the conclusion,2017,8.2,pg,fantasy,telugu
+pan's labyrinth,2006,8.2,r,fantasy,spanish
+maleficent,2014,8.3,pg,fantasy,english
