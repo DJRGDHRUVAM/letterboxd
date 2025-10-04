@@ -29,15 +29,10 @@ CREATE TABLE IF NOT EXISTS ratings (
 )
 """)
 
-cursor.execute("SHOW COLUMNS FROM movies LIKE 'language'")
-if cursor.fetchone() is None:
-    cursor.execute("ALTER TABLE movies ADD COLUMN language VARCHAR(50) DEFAULT 'English'")
-    database.commit()
 
 
 
 def clear_terminal():
-    """Clears the terminal screen based on the operating system."""
     if sys.platform.startswith('win'):
         os.system('cls')
     else:
@@ -82,7 +77,8 @@ def menu(username):
         print("2. Rate a movie")
         print("3. Delete your rating")
         print("4. Show my ratings")
-        print("5. Exit")
+        print("5. Search movies")
+        print("6. Exit")
         choice = input("Enter choice: ")
 
         if choice == "1":
@@ -94,6 +90,8 @@ def menu(username):
         elif choice == "4":
             movies_db.show_my_ratings(username)
         elif choice == "5":
+            movies_db.search_movies()
+        elif choice == "6":
             print("Exiting...")
             break
         else:

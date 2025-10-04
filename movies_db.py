@@ -240,3 +240,34 @@ def show_my_ratings(username):
     for movie in user_ratings:
         print(f"{movie[0]} | Rating: {movie[1]} | Genre: {movie[2]} | Age: {movie[3]} | Language: {movie[4]}")
     input("\nPress Enter to return to menu...")
+
+def search_movies():
+    search_term = input("Enter a part of the movie title to search: ").strip().lower()
+    if not search_term:
+        print("❌ Search term cannot be empty.")
+        return
+
+    # Search movies and calculate average rating
+    cursor.execute("""
+        SELECT m.title, m.year, m.genre, m.age_limit, m.language, AVG(r.rating) AS avg_rating
+        FROM movies m
+        LEFT JOIN ratings r ON m.title = r.movie_title
+        WHERE LOWER(m.title) LIKE %s
+        GROUP BY m.title, m.year, m.genre, m.age_limit, m.language
+        ORDER BY avg_rating DESC
+    """, (f"%{search_term}%",))
+
+    results = cursor.fetchall()
+    
+    if not results:
+        print(f"❌ No movies found matching '{search_term}'.")
+        time.sleep(2)
+        return
+
+    print(f"\n🎬 Movies matching '{search_term}':")
+    for m in results:
+        avg_rating = round(m[5], 1) if m[5] else "No ratings yet"
+        print(f"{m[0]} ({m[1]}) | Genre: {m[2]} | Age: {m[3]} | Language: {m[4]} | Avg Rating: {avg_rating}")
+    
+    input("\nPress Enter to return to menu...")
+
