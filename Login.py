@@ -23,9 +23,9 @@ CREATE TABLE IF NOT EXISTS users (
 cursor.execute("""
 CREATE TABLE IF NOT EXISTS ratings (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    username VARCHAR(255),
+    username VARCHAR(50),
     movie_title VARCHAR(255),
-    rating INT
+    rating FLOAT
 )
 """)
 
