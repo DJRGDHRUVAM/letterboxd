@@ -98,31 +98,38 @@ def menu(username):
             break
         else:
             print("Invalid choice.")
+            clear_terminal()
             time.sleep(2)
 
 def main():
     while True:
-        print("\n--- LOGIN SYSTEM ---")
-        print("a. Login")
-        print("b. Register")
-        print("c. Exit")
-        choice = input("Enter choice: ")
+        try:
+            print("\n--- LOGIN SYSTEM ---")
+            print("a. Login")
+            print("b. Register")
+            print("c. Exit")
+            choice = input("Enter choice: ")
 
-        if choice.lower() == 'a':
-            username = login()
-            if username:
-                movies = movies_db.load_movies_from_csv("movies.csv")
-                movies_db.insert_movies(movies)
-                menu(username)
+            if choice.lower() == 'a':
+                username = login()
+                if username:
+                    movies = movies_db.load_movies_from_csv("movies.csv")
+                    movies_db.insert_movies(movies)
+                    menu(username)
+                    break
+            elif choice.lower() == 'b':
+                register()
+            elif choice.lower() == 'c':
+                print("Exiting...")
                 break
-        elif choice.lower() == 'b':
-            register()
-        elif choice.lower() == 'c':
-            print("Exiting...")
-            break
-        else:
-            print("Invalid choice.")
+            else:
+                print("Invalid choice.")
+                time.sleep(2)
+                clear_terminal()
+        except:
+            print("An error occurred. Please try again.")
             time.sleep(2)
+            clear_terminal()
 
 if __name__ == "__main__":
     main()
