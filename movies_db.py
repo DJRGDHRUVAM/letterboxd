@@ -130,16 +130,37 @@ def display_top_movies():
 
 
 def rate_movie(username):
-    movie_title = input("Enter movie title to rate: ")
-    cursor.execute("SELECT * FROM movies WHERE title = %s", (movie_title,))
-    data = cursor.fetchall()
-    if len(data) == 0:
-        print("Your movie does not exist")
+    search_title = input("Enter movie title to rate: ").strip()
+    
+    # Search movies that contain the input string (case-insensitive)
+    cursor.execute("SELECT title FROM movies WHERE LOWER(title) LIKE %s", (f"%{search_title.lower()}%",))
+    matches = cursor.fetchall()
+    
+    if not matches:
+        print("Your movie does not exist.")
         adding = input("Want to add? (y/n): ").lower()
-        if adding=='y':
-            add_movies(movie_title)
+        if adding == 'y':
+            add_movies(search_title)
         else:
             return None
+    
+    elif len(matches) == 1:
+        # Exactly one match found
+        movie_title = matches[0][0]
+    else:
+        # Multiple matches found - ask user to choose
+        print("Multiple movies found:")
+        for i, m in enumerate(matches, 1):
+            print(f"{i}. {m[0]}")
+        while True:
+            choice = input(f"Enter the number of the movie you want to rate (1-{len(matches)}): ")
+            if choice.isdigit() and 1 <= int(choice) <= len(matches):
+                movie_title = matches[int(choice) - 1][0]
+                break
+            else:
+                print("Invalid choice, try again.")
+    
+    # Now ask rating
     while True:
         try:
             rating = int(input("Rate this movie (1-10): "))
@@ -151,11 +172,14 @@ def rate_movie(username):
         except ValueError:
             print("Enter a valid number.")
             time.sleep(2)
+    
+    # Insert rating
     cursor.execute("INSERT INTO ratings (username, movie_title, rating) VALUES (%s, %s, %s)",
                    (username, movie_title, rating))
     database.commit()
     print("✅ Rating saved!")
     time.sleep(2)
+
     
 def add_movies(movie_title):
     year = int(input("Enter the year of the movie: "))
