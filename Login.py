@@ -7,11 +7,11 @@ database = mysql.connector.connect(
     host="localhost",
     user="root",
     password="mysql",  
-    database="postboxd",
     charset='utf8'
 )
 cursor = database.cursor()
-
+cursor.execute("Create database if not exists padampoli")
+cursor.execute("use padampoli")
 cursor.execute("""
 CREATE TABLE IF NOT EXISTS users (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -44,11 +44,11 @@ def register():
     try:
         cursor.execute("INSERT INTO users (username, password) VALUES (%s, %s)", (username, password))
         database.commit()
-        print("✅ Registration successful")
+        print("Registration successful")
         time.sleep(1.25)
         clear_terminal()
     except mysql.connector.IntegrityError:
-        print("❌ Username already exists.")
+        print("Username already exists.")
         time.sleep(1.25)
         clear_terminal()
 
@@ -58,12 +58,12 @@ def login():
     cursor.execute("SELECT * FROM users WHERE username = %s AND password = %s", (username, password))
     user = cursor.fetchone()
     if user:
-        print(f"✅ Login successful! Welcome {username}")
+        print(f"Login successful! Welcome {username}")
         time.sleep(2)
         clear_terminal()
         return username
     else:
-        print("❌ Invalid username or password.")
+        print("Invalid username or password.")
         time.sleep(2)
         clear_terminal()
         return None
@@ -72,7 +72,7 @@ def login():
 def menu(username):
     while True:
         clear_terminal() 
-        print("\n--- MOVIE MENU ---")
+        print("--- MOVIE MENU ---")
         print("1. Display top 5 movies by rating")
         print("2. Rate a movie")
         print("3. Delete your rating")
@@ -100,9 +100,10 @@ def menu(username):
             time.sleep(2)
 
 def main():
+    clear_terminal()
     while True:
         try:
-            print("\n--- LOGIN SYSTEM ---")
+            print("--- LOGIN SYSTEM ---")
             print("a. Login")
             print("b. Register")
             print("c. Exit")
