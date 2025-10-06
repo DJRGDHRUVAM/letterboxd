@@ -6,7 +6,7 @@ database = mysql.connector.connect(
     host="localhost",
     user="root",
     password="mysql",
-    database="postboxd",
+    database="padampoli",
     charset="utf8"
 )
 database.autocommit = True
@@ -70,19 +70,19 @@ def display_top_movies():
         genre = input("Enter genre [Thriller, Action, SciFi, Romance, Fantasy or 'any']: ").lower()
         if genre in valid_genres:
             break
-        print("❌ Invalid genre. Try again.")
+        print("Invalid genre. Try again.")
 
     while True:
         age = input("Enter age category [G, PG, PG13, R or 'any']: ").lower()
         if age in valid_ages:
             break
-        print("❌ Invalid age category. Try again.")
+        print("Invalid age category. Try again.")
 
     while True:
         language = input("Enter language [English, Malayalam, Tamil, Telugu, Hindi or 'any']: ").lower()
         if language in valid_languages:
             break
-        print("❌ Invalid language. Try again.")
+        print("Invalid language. Try again.")
 
     # --- Build query dynamically ---
     query = """
@@ -191,6 +191,16 @@ def add_movies(movie_title):
     )
     database.commit()
     print("✅ Movie added successfully!")
+   
+    
+    
+    with open('movies.csv', 'a+', newline='', encoding='utf-8') as file:
+        csv_w = csv.writer(file)
+        csv_w.writerow([movie_title, year, imdb, age, genre, language])
+    print(f"Written to CSV: {movie_title}, {year}, {imdb}, {age}, {genre}, {language}")
+
+        
+        
 
 def delete_rating(username):
     # Ask which movie rating to delete
@@ -270,4 +280,3 @@ def search_movies():
         print(f"{m[0]} ({m[1]}) | Genre: {m[2]} | Age: {m[3]} | Language: {m[4]} | Avg Rating: {avg_rating}")
     
     input("\nPress Enter to return to menu...")
-
