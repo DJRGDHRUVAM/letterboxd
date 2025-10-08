@@ -17,7 +17,6 @@ CREATE TABLE IF NOT EXISTS movies (
     id INT AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(255),
     year INT,
-    rating FLOAT,
     age_limit VARCHAR(10),
     genre VARCHAR(50),
     language VARCHAR(50)
@@ -34,7 +33,6 @@ def load_movies_from_csv(file_path="movies.csv"):
             movies.append({
                 "title": row["title"],
                 "year": int(row["year"]),
-                "rating": float(row["rating"]),
                 "age_limit": row["age_limit"].lower(),
                 "genre": row["genre"].lower(),
                 "language": row["language"].lower()   # <-- added
@@ -48,9 +46,9 @@ def insert_movies(movies):
     if len(cursor.fetchall()) == 0:
         for movie in movies:
             cursor.execute("""
-                INSERT INTO movies (title, year, rating, age_limit, genre, language)
-                VALUES (%s, %s, %s, %s, %s, %s)
-            """, (movie["title"], movie["year"], movie["rating"],
+                INSERT INTO movies (title, year, age_limit, genre, language)
+                VALUES (%s, %s, %s, %s, %s)
+            """, (movie["title"], movie["year"],
                   movie["age_limit"], movie["genre"], movie["language"]))
         database.commit()
 
@@ -183,7 +181,6 @@ def rate_movie(username):
     
 def add_movies(movie_title):
     year = int(input("Enter the year of the movie: "))
-    imdb = float(input("Enter IMDb rating of the movie (0-10): "))
 
     # --- Genre validation ---
     valid_genres = ["thriller", "action", "scifi", "romance", "fantasy"]
@@ -210,8 +207,8 @@ def add_movies(movie_title):
         print("❌ Invalid language. Try again.")
 
     cursor.execute(
-        "INSERT INTO movies (title, year, rating, age_limit, genre, language) VALUES (%s, %s, %s, %s, %s, %s)",
-        (movie_title, year, imdb, age, genre, language)
+        "INSERT INTO movies (title, year,age_limit, genre, language) VALUES (%s, %s, %s, %s, %s)",
+        (movie_title, year, age, genre, language)
     )
     database.commit()
     print("✅ Movie added successfully!")
@@ -220,8 +217,8 @@ def add_movies(movie_title):
     
     with open('movies.csv', 'a+', newline='', encoding='utf-8') as file:
         csv_w = csv.writer(file)
-        csv_w.writerow([movie_title, year, imdb, age, genre, language])
-    print(f"Written to CSV: {movie_title}, {year}, {imdb}, {age}, {genre}, {language}")
+        csv_w.writerow([movie_title, year, age, genre, language])
+    print(f"Written to CSV: {movie_title}, {year}, {age}, {genre}, {language}")
 
         
         
