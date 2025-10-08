@@ -119,7 +119,8 @@ def main():
             elif choice.lower() == 'b':
                 register()
             elif choice.lower() == 'c':
-                print("Returning to login screen...")
+                print("Exiting...")
+                break
             else:
                 print("Invalid choice.")
                 time.sleep(2)

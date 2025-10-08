@@ -30,6 +30,3 @@ A **command-line Python application** with MySQL integration that allows users t
   - Show user’s own ratings  
 
 ---
-
-## 📂 Project Structure
-
