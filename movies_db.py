@@ -54,7 +54,7 @@ def insert_movies(movies):
 
 
 def get_all_movies():
-    cursor.execute("SELECT title, year, rating, age_limit, genre FROM movies")
+    cursor.execute("SELECT title, year, age_limit, genre FROM movies")
     return cursor.fetchall()
 
 def display_top_movies():
@@ -118,7 +118,7 @@ def display_top_movies():
     if top_movies:
         print("\n🏆 Top 5 Movies:")
         for m in top_movies:
-            avg_rating = round(m[5], 1) if m[5] else "No ratings yet"
+            avg_rating = round(m[5], 1) if m[5] is not None else "No ratings yet"
             print(f"{m[0]} ({m[1]}) | Genre: {m[2]} | Age: {m[3]} | Language: {m[4]} | Avg Rating: {avg_rating}")
         input("\nPress Enter to return to menu...")
     else:

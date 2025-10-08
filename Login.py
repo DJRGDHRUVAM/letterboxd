@@ -119,16 +119,15 @@ def main():
             elif choice.lower() == 'b':
                 register()
             elif choice.lower() == 'c':
-                print("Exiting...")
-                break
+                print("Returning to login screen...")
             else:
                 print("Invalid choice.")
                 time.sleep(2)
                 clear_terminal()
-        except:
-            print("An error occurred. Please try again.")
-            time.sleep(2)
-            clear_terminal()
+        except mysql.connector.Error as err:
+            print(f"MySQL error: {err}")
+        except Exception as e:
+            print(f"Unexpected error: {e}")
 
 if __name__ == "__main__":
     main()
