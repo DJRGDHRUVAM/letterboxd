@@ -1,4 +1,5 @@
 Introduction
+
 PADAMPOLI is a movie review system which  is a user-friendly platform designed to help movie enthusiasts discover top-rated films based on personalized filters such as language, age rating, genre, and release year. It allows users to create accounts, browse curated movie lists, and contribute their own reviews. By combining user-generated feedback with structured data, the system offers a dynamic and interactive experience for exploring cinema across diverse categories.
 
  Key Features  
