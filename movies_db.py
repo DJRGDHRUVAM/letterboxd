@@ -63,7 +63,7 @@ def display_top_movies():
     valid_ages = ["g", "pg", "pg13", "r", "any"]
     valid_languages = ["english", "malayalam", "tamil", "telugu", "hindi", "any"]
 
-    # --- User inputs with validation ---
+    # --- User inputs ---
     while True:
         genre = input("Enter genre [Thriller, Action, SciFi, Romance, Fantasy or 'any']: ").lower()
         if genre in valid_genres:
@@ -82,13 +82,28 @@ def display_top_movies():
             break
         print("Invalid language. Try again.")
 
+    # --- Get global mean rating (C) and count threshold (m) ---
+    cursor.execute("SELECT AVG(rating), COUNT(DISTINCT movie_title) FROM ratings")
+    result = cursor.fetchone()
+    C = result[0] if result[0] else 0
+    m = 5  # Minimum number of ratings required to count toward weighted average
+
     # --- Build query dynamically ---
-    query = """
+    query = f"""
     SELECT 
-        m.title, m.year, m.genre, m.age_limit, m.language, AVG(r.rating) AS avg_rating
+        m.title,
+        m.year,
+        m.genre,
+        m.age_limit,
+        m.language,
+        COUNT(r.rating) AS num_ratings,
+        AVG(r.rating) AS avg_rating,
+        ((COUNT(r.rating) / (COUNT(r.rating) + {m})) * AVG(r.rating) +
+         ({m} / (COUNT(r.rating) + {m})) * {C}) AS weighted_avg
     FROM movies m
     LEFT JOIN ratings r ON m.title = r.movie_title
     """
+
     params = []
     filters = []
 
@@ -107,19 +122,21 @@ def display_top_movies():
 
     query += """
     GROUP BY m.title, m.year, m.genre, m.age_limit, m.language
-    ORDER BY avg_rating DESC
+    ORDER BY weighted_avg DESC
     LIMIT 5
     """
 
-    # --- Execute and display ---
     cursor.execute(query, tuple(params))
     top_movies = cursor.fetchall()
 
     if top_movies:
-        print("\n🏆 Top 5 Movies:")
+        print("\n🏆 Top 5 Movies (Weighted Avg):")
         for m in top_movies:
-            avg_rating = round(m[5], 1) if m[5] is not None else "No ratings yet"
-            print(f"{m[0]} ({m[1]}) | Genre: {m[2]} | Age: {m[3]} | Language: {m[4]} | Avg Rating: {avg_rating}")
+            num = m[5]
+            avg = round(m[6], 2) if m[6] else "—"
+            wavg = round(m[7], 2) if m[7] else "—"
+            print(f"{m[0].title()} ({m[1]}) | Genre: {m[2].title()} | Age: {m[3].upper()} | "
+                  f"Lang: {m[4].title()} | Ratings: {num} | Avg: {avg} | Weighted: {wavg}")
         input("\nPress Enter to return to menu...")
     else:
         print("No movies found with the selected filters.")
@@ -130,7 +147,6 @@ def display_top_movies():
 def rate_movie(username):
     search_title = input("Enter movie title to rate: ").strip()
     
-    # Search movies that contain the input string (case-insensitive)
     cursor.execute("SELECT title FROM movies WHERE LOWER(title) LIKE %s", (f"%{search_title.lower()}%",))
     matches = cursor.fetchall()
     
@@ -139,14 +155,13 @@ def rate_movie(username):
         adding = input("Want to add? (y/n): ").lower()
         if adding == 'y':
             add_movies(search_title)
+            movie_title = search_title  # ✅ define it after adding
         else:
             return None
     
     elif len(matches) == 1:
-        # Exactly one match found
         movie_title = matches[0][0]
     else:
-        # Multiple matches found - ask user to choose
         print("Multiple movies found:")
         for i, m in enumerate(matches, 1):
             print(f"{i}. {m[0]}")
@@ -158,20 +173,16 @@ def rate_movie(username):
             else:
                 print("Invalid choice, try again.")
     
-    # Now ask rating
+    # Ask rating safely
     while True:
         try:
             rating = int(input("Rate this movie (1-10): "))
             if 1 <= rating <= 10:
                 break
-            else:
-                print("Rating must be 1–10.")
-                time.sleep(2)
+            print("Rating must be 1–10.")
         except ValueError:
-            print("Enter a valid number.")
-            time.sleep(2)
+            print("Enter a valid integer.")
     
-    # Insert rating
     cursor.execute("INSERT INTO ratings (username, movie_title, rating) VALUES (%s, %s, %s)",
                    (username, movie_title, rating))
     database.commit()
@@ -212,16 +223,13 @@ def add_movies(movie_title):
     )
     database.commit()
     print("✅ Movie added successfully!")
-   
-    
-    
     with open('movies.csv', 'a+', newline='', encoding='utf-8') as file:
         csv_w = csv.writer(file)
         csv_w.writerow([movie_title, year, age, genre, language])
-    print(f"Written to CSV: {movie_title}, {year}, {age}, {genre}, {language}")
+    time.sleep(2)
+    
 
-        
-        
+
 
 def delete_rating(username):
     # Ask which movie rating to delete
@@ -269,13 +277,14 @@ def show_my_ratings(username):
     
     print("\n🎬 Your Rated Movies:")
     for movie in user_ratings:
-        print(f"{movie[0]} | Rating: {movie[1]} | Genre: {movie[2]} | Age: {movie[3]} | Language: {movie[4]}")
+        print(f"{movie[0].title()} | Rating: {movie[1]} | Genre: {movie[2].title()} | Age: {movie[3].upper()} | Language: {movie[4].title()}")
     input("\nPress Enter to return to menu...")
-
+    
 def search_movies():
     search_term = input("Enter a part of the movie title to search: ").strip().lower()
     if not search_term:
         print("❌ Search term cannot be empty.")
+        time.sleep(2)
         return
 
     # Search movies and calculate average rating
@@ -298,6 +307,5 @@ def search_movies():
     print(f"\n🎬 Movies matching '{search_term}':")
     for m in results:
         avg_rating = round(m[5], 1) if m[5] else "No ratings yet"
-        print(f"{m[0]} ({m[1]}) | Genre: {m[2]} | Age: {m[3]} | Language: {m[4]} | Avg Rating: {avg_rating}")
-    
+        print(f"{m[0].title()} ({m[1]}) | Genre: {m[2].title()} | Age: {m[3].upper()} | Language: {m[4].title()} | Avg Rating: {avg_rating}")
     input("\nPress Enter to return to menu...")

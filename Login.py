@@ -92,8 +92,10 @@ def menu(username):
         elif choice == "5":
             movies_db.search_movies()
         elif choice == "6":
-            print("Exiting...")
-            break
+            print("Exiting to Login page...")
+            time.sleep(1)
+            clear_terminal()
+            main()
         else:
             print("Invalid choice.")
             clear_terminal()
@@ -103,23 +105,25 @@ def main():
     clear_terminal()
     while True:
         try:
-            print("--- LOGIN SYSTEM ---")
-            print("a. Login")
-            print("b. Register")
+            print("--- WELCOME TO PADAMPOLI THE BEST MOVIE RATING INTERFACE ---")
+            print("a. Register")
+            print("b. Login")
             print("c. Exit")
             choice = input("Enter choice: ")
 
-            if choice.lower() == 'a':
+            if choice.lower() == 'b':
                 username = login()
                 if username:
                     movies = movies_db.load_movies_from_csv("movies.csv")
                     movies_db.insert_movies(movies)
                     menu(username)
                     break
-            elif choice.lower() == 'b':
+            elif choice.lower() == 'a':
                 register()
             elif choice.lower() == 'c':
                 print("Exiting...")
+                time.sleep(1)
+                clear_terminal()
                 break
             else:
                 print("Invalid choice.")
