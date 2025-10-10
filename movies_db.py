@@ -189,7 +189,7 @@ def rate_movie(username):
     print("✅ Rating saved!")
     time.sleep(2)
 
-    
+
 def add_movies(movie_title):
     year = int(input("Enter the year of the movie: "))
 
@@ -227,7 +227,7 @@ def add_movies(movie_title):
         csv_w = csv.writer(file)
         csv_w.writerow([movie_title, year, age, genre, language])
     time.sleep(2)
-    
+
 
 
 
@@ -279,7 +279,8 @@ def show_my_ratings(username):
     for movie in user_ratings:
         print(f"{movie[0].title()} | Rating: {movie[1]} | Genre: {movie[2].title()} | Age: {movie[3].upper()} | Language: {movie[4].title()}")
     input("\nPress Enter to return to menu...")
-    
+
+
 def search_movies():
     search_term = input("Enter a part of the movie title to search: ").strip().lower()
     if not search_term:
