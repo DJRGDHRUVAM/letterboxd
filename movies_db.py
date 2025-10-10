@@ -290,12 +290,19 @@ def search_movies():
 
     # Search movies and calculate average rating
     cursor.execute("""
-        SELECT m.title, m.year, m.genre, m.age_limit, m.language, AVG(r.rating) AS avg_rating
+        SELECT 
+            m.title, 
+            m.year, 
+            m.genre, 
+            m.age_limit, 
+            m.language, 
+            AVG(r.rating) AS avg_rating
         FROM movies m
         LEFT JOIN ratings r ON m.title = r.movie_title
         WHERE LOWER(m.title) LIKE %s
         GROUP BY m.title, m.year, m.genre, m.age_limit, m.language
         ORDER BY avg_rating DESC
+        LIMIT 20
     """, (f"%{search_term}%",))
 
     results = cursor.fetchall()
@@ -305,8 +312,10 @@ def search_movies():
         time.sleep(2)
         return
 
-    print(f"\n🎬 Movies matching '{search_term}':")
-    for m in results:
+    print(f"\n🎬 Movies matching '{search_term}': (showing up to 20 results)")
+    for idx, m in enumerate(results, start=1):
         avg_rating = round(m[5], 1) if m[5] else "No ratings yet"
-        print(f"{m[0].title()} ({m[1]}) | Genre: {m[2].title()} | Age: {m[3].upper()} | Language: {m[4].title()} | Avg Rating: {avg_rating}")
+        print(f"{idx:02d}. {m[0].title()} ({m[1]}) | Genre: {m[2].title()} | "
+              f"Age: {m[3].upper()} | Language: {m[4].title()} | Avg Rating: {avg_rating}")
+
     input("\nPress Enter to return to menu...")

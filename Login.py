@@ -71,7 +71,7 @@ def login():
 
 def menu(username):
     while True:
-        clear_terminal() 
+        clear_terminal()
         print("--- MOVIE MENU ---")
         print("1. Display top 5 movies by rating")
         print("2. Rate a movie")
@@ -98,8 +98,9 @@ def menu(username):
             main()
         else:
             print("Invalid choice.")
-            clear_terminal()
             time.sleep(2)
+            clear_terminal()
+
 
 def main():
     clear_terminal()
