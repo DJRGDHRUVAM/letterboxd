@@ -157,10 +157,12 @@ padampoli/
 
 ---
 
-## 🧑‍💻 Author
+## Authors
 
-**Furry Mittens**
-💡 Python enthusiast | 🎥 Movie buff | 🧠 Building cool CLI apps
+**Devika**
+**Neha**
+**Tuvya**
+**Druv**
 
 ---
 
@@ -169,5 +171,3 @@ padampoli/
 This project is open-source and free to use under the **MIT License**.
 
 ---
-
-Would you like me to make this version more **fun & colorful (with emojis, badges, and markdown banners)** for a GitHub-style README, or keep it **simple and professional** (for internal docs or reports)?
