@@ -11,6 +11,9 @@ database = mysql.connector.connect(
 database.autocommit = True
 cursor = database.cursor()
 
+cursor.execute("Create database if not exists padampoli")
+cursor.execute("use padampoli")
+
 cursor.execute("""
 CREATE TABLE IF NOT EXISTS movies (
     id INT AUTO_INCREMENT PRIMARY KEY,

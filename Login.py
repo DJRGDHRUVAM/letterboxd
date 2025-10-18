@@ -8,11 +8,10 @@ database = mysql.connector.connect(
     host="localhost",
     user="root",
     password="mysql",  
-    charset='utf8'
+    charset='utf8',
+    database="padampoli"
 )
 cursor = database.cursor()
-cursor.execute("Create database if not exists padampoli")
-cursor.execute("use padampoli")
 cursor.execute("""
 CREATE TABLE IF NOT EXISTS users (
     id INT AUTO_INCREMENT PRIMARY KEY,
