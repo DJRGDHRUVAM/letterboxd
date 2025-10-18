@@ -6,7 +6,6 @@ database = mysql.connector.connect(
     host="localhost",
     user="root",
     password="mysql",
-    database="padampoli",
     charset="utf8"
 )
 database.autocommit = True
@@ -319,3 +318,4 @@ def search_movies():
               f"Age: {m[3].upper()} | Language: {m[4].title()} | Avg Rating: {avg_rating}")
 
     input("\nPress Enter to return to menu...")
+

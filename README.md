@@ -1,6 +1,3 @@
-Here’s a clear, well-structured **README.md** for your project — written as if you’re publishing it on GitHub 👇
-
----
 
 # 🎬 Padampoli Movie Rating System
 
