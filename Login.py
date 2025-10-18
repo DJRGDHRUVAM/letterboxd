@@ -1,3 +1,4 @@
+
 import mysql.connector
 import movies_db  
 import time
@@ -95,7 +96,7 @@ def menu(username):
             print("Exiting to Login page...")
             time.sleep(1)
             clear_terminal()
-            main()
+            return
         else:
             print("Invalid choice.")
             time.sleep(2)
@@ -111,7 +112,6 @@ def main():
             print("b. Login")
             print("c. Exit")
             choice = input("Enter choice: ")
-
             if choice.lower() == 'b':
                 username = login()
                 if username:
