@@ -321,4 +321,3 @@ def search_movies():
               f"Age: {m[3].upper()} | Language: {m[4].title()} | Avg Rating: {avg_rating}")
 
     input("\nPress Enter to return to menu...")
-
